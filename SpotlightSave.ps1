@@ -4,15 +4,24 @@ $spotLightDir = $env:LOCALAPPDATA + "\Packages\Microsoft.Windows.ContentDelivery
 $saveDir = $env:USERPROFILE + "\Pictures\Spotlight"
 $saveFileExtension = ".jpg"
 
-$imageFileList = Get-ChildItem -Path $spotLightDir | Where-Object{$_.Length -ge 50KB} | ForEach-Object {$_}
-$saveFileList = $imageFileList | Where-Object {[System.Drawing.Image]::FromFile($_.FullName).Width -eq 1920} 
+$imageFileList = Get-ChildItem -Path $spotLightDir | Where-Object { $_.Length -ge 50KB }
+$existingFileNameList = Get-ChildItem -Path $saveDir | ForEach-Object { $_.BaseName }
+$newFileList = $imageFileList | Where-Object { $existingFileNameList -notContains ($_.BaseName) }
+
+$fullHdImageList = $newFileList | Where-Object { 
+  $img = [System.Drawing.Image]::FromFile($_.FullName)
+  $img.Width -eq 1920 -and $img.Height -eq 1080
+}
+
 try {
-  $saveFileList | ForEach-Object {
+  If ($fullHdImageList.Length -eq 0) { Write-Host "no new file for saving" }
+  $fullHdImageList | ForEach-Object {
     $src = $_.FullName
     $dst = $saveDir + "\" + $_.BaseName + $saveFileExtension
     Copy-Item -Path $src -Destination $dst -ErrorAction Stop
     Write-Host "saved: $dst"
   }
-} catch {
+}
+catch {
   Write-Error("Error:" + $_.Exception)
 }
