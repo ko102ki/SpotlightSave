@@ -4,6 +4,10 @@ $spotLightDir = $env:LOCALAPPDATA + "\Packages\Microsoft.Windows.ContentDelivery
 $saveDir = $env:USERPROFILE + "\Pictures\Spotlight"
 $saveFileExtension = ".jpg"
 
+if (Test-Path ($saveDir + ".\")) { } else {
+  New-Item -ItemType Directory $saveDir
+}
+
 $imageFileList = Get-ChildItem -Path $spotLightDir | Where-Object { $_.Length -ge 50KB }
 $existingFileNameList = Get-ChildItem -Path $saveDir | ForEach-Object { $_.BaseName }
 $newFileList = $imageFileList | Where-Object { $existingFileNameList -notContains ($_.BaseName) }
