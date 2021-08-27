@@ -1,7 +1,7 @@
 Add-Type -AssemblyName System.Drawing
 
 $spotLightDir = $env:LOCALAPPDATA + "\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets"
-$saveDir = $env:USERPROFILE + "\Pictures\Spotlight"
+$saveDir = [Environment]::GetFolderPath("MyPictures") + "\Spotlight"
 $saveFileExtension = ".jpg"
 
 if (Test-Path ($saveDir + ".\")) { } else {
